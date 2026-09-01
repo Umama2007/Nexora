@@ -1,0 +1,349 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pageHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.pageHeader p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.mainCard {
+  background-color: var(--card-bg);
+}
+
+.avatarSection {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 1.5rem;
+}
+
+.avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.avatarMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.avatarMeta h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.125rem;
+}
+
+.nameInput {
+  width: 100%;
+  font-size: 1.25rem;
+  font-weight: 700;
+  font-family: inherit;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--border-color);
+  padding: 0.125rem 0;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.nameInput::placeholder {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.nameInput:focus {
+  border-bottom-color: var(--accent-primary);
+}
+
+.roleInput {
+  width: 100%;
+  font-size: 0.875rem;
+  font-family: inherit;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 1px dashed var(--border-color);
+  padding: 0.25rem 0;
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.roleInput::placeholder {
+  color: var(--text-muted);
+}
+
+.roleInput:focus {
+  border-bottom-color: var(--accent-primary);
+}
+
+.roleSubtext {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.375rem;
+}
+
+.detailsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.detailItem {
+  display: flex;
+  gap: 1rem;
+  align-items: start;
+}
+
+.detailIcon {
+  color: var(--text-muted);
+  flex-shrink: 0;
+  margin-top: 0.25rem;
+}
+
+.detailText {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  flex: 1;
+}
+
+.detailLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.detailValue {
+  font-size: 0.9375rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.fieldInput,
+.fieldSelect {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.9375rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  transition: all var(--transition-fast);
+}
+
+.fieldInput:hover,
+.fieldSelect:hover {
+  border-color: var(--text-muted);
+}
+
+.fieldInput:focus,
+.fieldSelect:focus {
+  border-color: var(--accent-primary);
+  outline: none;
+}
+
+.fieldInput::placeholder {
+  color: var(--text-muted);
+}
+
+.emptyHint {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.25rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  border: 1px solid var(--border-color);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+}
+
+.tagGhost {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+  padding: 0.25rem 0.625rem;
+  border-radius: var(--radius-sm);
+}
+
+.tagRemove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  color: var(--text-muted);
+  border-radius: 50%;
+  transition: color var(--transition-fast);
+}
+
+.tagRemove:hover {
+  color: var(--error);
+}
+
+.tagAddRow {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tagAddInput {
+  flex: 1;
+  padding: 0.375rem 0.625rem;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  color: var(--text-primary);
+  background-color: var(--card-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-sm);
+  outline: none;
+  transition: border-color var(--transition-fast);
+}
+
+.tagAddInput::placeholder {
+  color: var(--text-muted);
+}
+
+.tagAddInput:focus {
+  border-color: var(--accent-primary);
+}
+
+.tagAddBtn {
+  flex-shrink: 0;
+}
+
+.footer {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+  margin-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.footerStatus {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+}
+
+.savedNote {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  color: var(--success);
+}
+
+.errorNote {
+  color: var(--error);
+}
+
+.footerActions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.syncBtn {
+  font-size: 0.8125rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnIcon {
+  flex-shrink: 0;
+}
+
+.spin {
+  animation: rotateSync 1.5s linear infinite;
+}
+
+@keyframes rotateSync {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* FAQ Sidebar */
+.faqCard {
+  background-color: var(--card-bg);
+}
+
+.faqList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.faqItem h4 {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.375rem;
+}
+
+.faqItem p {
+  font-size: 0.8125rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}

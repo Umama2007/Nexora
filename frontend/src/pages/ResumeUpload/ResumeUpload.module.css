@@ -1,0 +1,315 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pageHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.pageHeader p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.contentGrid {
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: 1.5rem;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .contentGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Context Card Forms */
+.contextCard {
+  background-color: var(--card-bg);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.formGroup:last-child {
+  margin-bottom: 0;
+}
+
+.label {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.selectWrapper {
+  position: relative;
+}
+
+.select, .input, .textarea {
+  width: 100%;
+  padding: 0.625rem 0.875rem;
+  font-size: 0.875rem;
+  font-family: inherit;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  background-color: #ffffff;
+  color: var(--text-primary);
+  transition: all var(--transition-fast);
+}
+
+.textarea {
+  resize: vertical;
+  min-height: 110px;
+  line-height: 1.45;
+}
+
+.textarea::placeholder {
+  color: var(--text-muted);
+}
+
+.jdHint {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 0.375rem;
+  line-height: 1.35;
+}
+
+.select:hover, .input:hover {
+  border-color: var(--text-muted);
+}
+
+.select:focus, .input:focus {
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 0 3px rgba(79, 110, 247, 0.1);
+}
+
+/* Upload Card Dropzone */
+.uploadCard {
+  min-height: 300px;
+  display: flex;
+  flex-direction: column;
+}
+
+.fileInput {
+  display: none;
+}
+
+.dropzone {
+  flex: 1;
+  border: 2px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 3rem 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  background-color: var(--bg-primary);
+}
+
+.dragging {
+  border-color: var(--accent-primary);
+  background-color: var(--accent-primary-light);
+}
+
+.uploadIcon {
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+  transition: color var(--transition-fast);
+}
+
+.dropzone:hover .uploadIcon, .dragging .uploadIcon {
+  color: var(--accent-primary);
+}
+
+.dropzone h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.helpText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 1.5rem;
+}
+
+.elapsedText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 1.25rem;
+}
+
+.browseBtn {
+  font-size: 0.8125rem;
+  padding: 0.5rem 1.25rem;
+}
+
+/* Processing Zone */
+.processingZone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.pulseIcon {
+  color: var(--accent-primary);
+  margin-bottom: 1.25rem;
+  animation: rotateSpinner 2s linear infinite;
+}
+
+@keyframes rotateSpinner {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.processingZone h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.progressBarWrapper {
+  width: 100%;
+  max-width: 280px;
+  height: 4px;
+  background-color: var(--border-color);
+  border-radius: 9999px;
+  overflow: hidden;
+  margin-top: 1.5rem;
+}
+
+.progressBarFill {
+  height: 100%;
+  width: 30%;
+  background-color: var(--accent-primary);
+  border-radius: 9999px;
+  animation: fillProgress 1.8s ease-in-out infinite;
+}
+
+@keyframes fillProgress {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(330%); }
+}
+
+.splitNote {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 1rem;
+  max-width: 320px;
+}
+
+/* Success Zone */
+.successZone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1rem 0;
+}
+
+.fileCard {
+  display: flex;
+  align-items: center;
+  padding: 1.25rem;
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  background-color: var(--bg-primary);
+  margin-bottom: 2rem;
+}
+
+.fileIcon {
+  color: var(--accent-primary);
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
+.fileMeta {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.fileName {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.fileSize {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.checkIcon {
+  color: var(--success);
+  margin-left: 1rem;
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+}
+
+.btn {
+  font-size: 0.875rem;
+}
+
+/* Error Zone */
+.errorZone {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 2rem;
+}
+
+.errorIcon {
+  color: var(--error);
+  margin-bottom: 1.25rem;
+}
+
+.errorZone h3 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.errorText {
+  font-size: 0.875rem;
+  color: var(--error);
+  margin-bottom: 1.5rem;
+  max-width: 280px;
+}
+
+.retryBtn {
+  font-size: 0.8125rem;
+}

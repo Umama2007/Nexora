@@ -1,0 +1,161 @@
+.sidebar {
+  width: 260px;
+  background-color: var(--card-bg);
+  border-right: 1px solid var(--border-color);
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+  transition: transform var(--transition-normal);
+}
+
+.header {
+  padding: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid var(--border-color);
+  min-height: 73px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logoContainer {
+  height: 32px;
+  width: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.logo {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.wordmark {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+}
+
+.closeBtn {
+  display: none;
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+}
+
+.closeBtn:hover {
+  color: var(--text-primary);
+}
+
+.nav {
+  flex: 1;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+.group {
+  margin-bottom: 1.75rem;
+}
+
+.groupLabel {
+  font-size: 0.75rem; /* 12px */
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+  display: block;
+  margin-bottom: 0.5rem;
+  padding-left: 0.75rem;
+}
+
+.list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.75rem;
+  color: var(--text-secondary);
+  border-radius: var(--radius-md);
+  font-size: 0.875rem; /* 14px */
+  font-weight: 500;
+  transition: all var(--transition-fast);
+}
+
+.link:hover {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.icon {
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.link:hover .icon {
+  color: var(--text-primary);
+}
+
+.active {
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
+
+.active:hover {
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
+
+.active .icon {
+  color: var(--accent-primary);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .closeBtn {
+    display: block;
+  }
+
+  .overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(23, 32, 51, 0.4);
+    backdrop-filter: blur(2px);
+    z-index: 99;
+    animation: fadeIn var(--transition-fast);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}

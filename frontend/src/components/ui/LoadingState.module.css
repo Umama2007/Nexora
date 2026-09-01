@@ -1,0 +1,257 @@
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 640px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.colSpan2 {
+  grid-column: span 3;
+}
+
+@media (max-width: 1024px) {
+  .colSpan2 {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 640px) {
+  .colSpan2 {
+    grid-column: span 1;
+  }
+}
+
+/* Skeletons basic blocks */
+.skeletonCard {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.skeletonTitle, .skeletonText, .skeletonBar, .skeletonCircle, .scoreCircle, .barPlaceholder, .chatBubble, .inputSkeleton, .buttonSkeleton {
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: loadingPulse 1.5s infinite;
+  border-radius: var(--radius-sm);
+}
+
+@keyframes loadingPulse {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeletonTitle {
+  height: 24px;
+}
+
+.skeletonText {
+  height: 14px;
+}
+
+.skeletonBar {
+  height: 10px;
+  border-radius: 9999px;
+}
+
+.skeletonCircle {
+  height: 120px;
+  width: 120px;
+  border-radius: 50%;
+  margin: 0 auto;
+}
+
+/* Sizes */
+.w20 { width: 20%; }
+.w30 { width: 30%; }
+.w40 { width: 40%; }
+.w50 { width: 50%; }
+.w60 { width: 60%; }
+.w70 { width: 70%; }
+.w80 { width: 80%; }
+.w90 { width: 90%; }
+.w100 { width: 100%; }
+
+.mb5 { margin-bottom: 0.3125rem; }
+.mb10 { margin-bottom: 0.625rem; }
+.mb15 { margin-bottom: 0.9375rem; }
+.mb20 { margin-bottom: 1.25rem; }
+.mt5 { margin-top: 0.3125rem; }
+
+/* Dashboard layout elements */
+.row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-bottom: 1.25rem;
+}
+
+/* Analysis Skeleton */
+.analysisContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.headerRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.headerLeft {
+  flex: 1;
+}
+
+.scoreCircle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 768px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+.barRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.barPlaceholder {
+  height: 10px;
+  width: 100%;
+  border-radius: 9999px;
+}
+
+/* Interview Skeleton */
+.interviewContainer {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  display: flex;
+  flex-direction: column;
+  height: 500px;
+}
+
+.chatHeader {
+  display: flex;
+  justify-content: space-between;
+  padding: 1.25rem;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.chatArea {
+  flex: 1;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  overflow-y: hidden;
+}
+
+.chatBubble {
+  max-width: 70%;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+}
+
+.aiBubble {
+  align-self: flex-start;
+  border-bottom-left-radius: 0;
+}
+
+.userBubble {
+  align-self: flex-end;
+  border-bottom-right-radius: 0;
+}
+
+.chatInputPlaceholder {
+  display: flex;
+  padding: 1.25rem;
+  border-top: 1px solid var(--border-color);
+  gap: 1rem;
+}
+
+.inputSkeleton {
+  flex: 1;
+  height: 40px;
+}
+
+.buttonSkeleton {
+  width: 80px;
+  height: 40px;
+}
+
+/* Roadmap Skeleton */
+.roadmapContainer {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+}
+
+.timeline {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  position: relative;
+  padding-left: 1.5rem;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 8px;
+  bottom: 8px;
+  width: 2px;
+  background-color: var(--border-color);
+}
+
+.timelineItem {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.timelinePoint {
+  position: absolute;
+  left: -22px;
+  top: 6px;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+}
+
+.timelineContent {
+  flex: 1;
+}

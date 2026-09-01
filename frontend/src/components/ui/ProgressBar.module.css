@@ -1,0 +1,65 @@
+.wrapper {
+  width: 100%;
+}
+
+.labels {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 0.375rem;
+}
+
+.leftLabel {
+  display: flex;
+  flex-direction: column;
+}
+
+.mainLabel {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.subLabel {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.barContainer {
+  width: 100%;
+  background-color: var(--border-color);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.sm {
+  height: 6px;
+}
+
+.md {
+  height: 10px;
+}
+
+.fill {
+  height: 100%;
+  border-radius: 9999px;
+  transition: width var(--transition-normal);
+}
+
+.success {
+  background-color: var(--success);
+}
+
+.warning {
+  background-color: var(--warning);
+}
+
+.error {
+  background-color: var(--error);
+}

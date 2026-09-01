@@ -1,0 +1,165 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pageHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.pageHeader p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+}
+
+.tableCard {
+  background-color: var(--card-bg);
+}
+
+.tableResponsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.875rem;
+}
+
+.th {
+  padding: 1rem 1.5rem;
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.tr {
+  border-bottom: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.tr:last-child {
+  border-bottom: none;
+}
+
+.tr:hover {
+  background-color: var(--bg-primary);
+}
+
+.td {
+  padding: 1.25rem 1.5rem;
+  vertical-align: middle;
+  color: var(--text-secondary);
+}
+
+.textRight {
+  text-align: right;
+}
+
+.filenameCell {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.fileIcon {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.filename {
+  font-weight: 600;
+  color: var(--text-primary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+}
+
+.roleCell {
+  display: flex;
+  flex-direction: column;
+}
+
+.roleName {
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.levelName {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.scoreText {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.unavailableText {
+  font-weight: 600;
+  color: var(--text-muted);
+}
+
+.dateText {
+  color: var(--text-secondary);
+  white-space: nowrap;
+}
+
+.viewBtn {
+  font-size: 0.8125rem;
+  color: var(--accent-primary);
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.viewBtn:hover {
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
+
+/* Empty State Card */
+.emptyCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 4rem 2rem;
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.emptyIcon {
+  color: var(--text-muted);
+  margin-bottom: 1.25rem;
+}
+
+.emptyCard h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+
+.emptyCard p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+  line-height: 1.4;
+}

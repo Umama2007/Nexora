@@ -1,0 +1,1009 @@
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  --landing-bg: #F5F1E9;
+  --landing-display: 3.5rem; /* ~56px */
+  background-color: var(--landing-bg);
+}
+
+.navbar {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 1.5rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.logoContainer {
+  height: 28px;
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+.logo {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.wordmark {
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+}
+
+/* Hero Section Grid Layout */
+.heroGrid {
+  max-width: 1200px;
+  width: 100%;
+  margin: 4rem auto;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: 5.5fr 4.5fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.heroLeft {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  text-align: left;
+}
+
+.heroRight {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+}
+
+.heroLogoContainer {
+  width: 32px;
+  height: 32px;
+  margin-bottom: 1.5rem;
+}
+
+.heroLogo {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tagline {
+  font-size: var(--landing-display, 3.5rem);
+  font-weight: 800;
+  color: var(--text-primary);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  margin-bottom: 1.5rem;
+  text-align: left;
+}
+
+.heroSubtitle {
+  font-size: 1.125rem; /* 18px */
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin-bottom: 2.25rem;
+  max-width: 600px;
+  text-align: left;
+}
+
+.ctaGroup {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-start;
+}
+
+/* Mocked-up Visual Proof Card */
+.proofCard {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 1.5rem;
+  box-shadow: var(--shadow-lg);
+  width: 100%;
+  max-width: 420px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  border-left: 4px solid var(--accent-primary);
+}
+
+.proofHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 0.75rem;
+}
+
+.proofRole {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  max-width: 180px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.proofDate {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.proofScoreSection {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.proofRadial {
+  width: 72px;
+  height: 72px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.proofSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.proofCircleBg {
+  fill: transparent;
+  stroke: var(--border-color);
+  stroke-width: 8;
+}
+
+.proofCircleActive {
+  fill: transparent;
+  stroke: var(--success);
+  stroke-width: 8;
+  stroke-dasharray: 251.2;
+  stroke-dashoffset: 45.2; /* roughly 82% */
+  stroke-linecap: round;
+  transform: rotate(-90 50 50);
+  transform-origin: center;
+}
+
+.proofRadialText {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+
+.proofRadialNum {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.proofRadialDenom {
+  font-size: 0.625rem;
+  color: var(--text-muted);
+}
+
+.proofMeta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.proofStatus {
+  font-size: 0.875rem;
+  font-weight: 700;
+  color: var(--success);
+}
+
+.proofTarget {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.proofStats {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.proofStatRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.75rem;
+}
+
+.statLabelText {
+  color: var(--text-secondary);
+  font-weight: 500;
+  width: 110px;
+  white-space: nowrap;
+}
+
+.statBarWrapper {
+  flex: 1;
+  height: 6px;
+  background-color: var(--border-color);
+  border-radius: 9999px;
+  overflow: hidden;
+}
+
+.statBarFill {
+  height: 100%;
+  background-color: var(--accent-primary);
+  border-radius: 9999px;
+}
+
+.statValText {
+  color: var(--text-primary);
+  font-weight: 600;
+  width: 45px;
+  text-align: right;
+}
+
+.proofFooter {
+  border-top: 1px solid var(--border-color);
+  padding-top: 0.75rem;
+}
+
+.proofInsight {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--accent-primary);
+}
+
+.heroCta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(79, 110, 247, 0.25);
+}
+
+.heroCta:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 110, 247, 0.35);
+}
+
+.ctaIcon {
+  transition: transform var(--transition-fast);
+}
+
+.heroCta:hover .ctaIcon {
+  transform: translateX(3px);
+}
+
+.heroSec {
+  font-weight: 500;
+}
+
+/* Features Grid */
+.featuresSection {
+  max-width: 1200px;
+  width: 100%;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.sectionHeader {
+  text-align: center;
+  margin-bottom: 3.5rem;
+}
+
+.sectionTitle {
+  font-size: 1.75rem; /* ~28px */
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+}
+
+.sectionSubtitle {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  max-width: 500px;
+  margin: 0 auto;
+}
+
+.featuresGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+}
+
+.featureCard {
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2rem;
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-normal);
+}
+
+.featureCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+  border-color: var(--text-muted);
+}
+
+.featureIconContainer {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 1.25rem;
+}
+
+.featureTitle {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.featureDesc {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+/* Steps Strip */
+.stepsSection {
+  max-width: 1200px;
+  width: 100%;
+  margin: 4rem auto;
+  padding: 0 2rem;
+}
+
+.stepsStrip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1.5rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem 2rem;
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  z-index: 10;
+}
+
+.stepsStrip::after {
+  content: '';
+  position: absolute;
+  top: 4.25rem;
+  left: 5rem;
+  right: 5rem;
+  height: 1px;
+  border-top: 2.5px dotted var(--accent-primary);
+  opacity: 0.18;
+  z-index: 1;
+}
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 5;
+}
+
+.stepNum {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--accent-primary);
+  background-color: var(--card-bg);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 9999px;
+  margin-bottom: 1rem;
+  z-index: 6;
+  border: 1.5px solid var(--border-color);
+  transition: transform var(--transition-fast);
+}
+
+.stepTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.stepDesc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.4;
+}
+
+
+
+/* Responsiveness */
+@media (max-width: 960px) {
+  .stepsStrip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.5rem 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .heroGrid {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    text-align: center;
+  }
+
+  .heroLeft {
+    align-items: center;
+    text-align: center;
+  }
+
+  .tagline {
+    font-size: 2.25rem;
+    text-align: center;
+  }
+  
+  .heroSubtitle {
+    text-align: center;
+    max-width: 100%;
+  }
+
+  .ctaGroup {
+    justify-content: center;
+  }
+  
+  .featuresGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 640px) {
+  .heroGrid {
+    margin: 2rem auto;
+    gap: 2rem;
+  }
+
+  .ctaGroup {
+    flex-direction: column;
+    width: 100%;
+    max-width: 280px;
+    align-items: center;
+  }
+
+  .stepsStrip {
+    grid-template-columns: 1fr;
+    gap: 2rem;
+  }
+}
+
+/* ==========================================================================
+   LANDING PAGE POLISH PASS STYLES
+   ========================================================================== */
+
+/* Radial Gradient Background behind Hero */
+.heroGrid {
+  position: relative;
+  background: radial-gradient(circle at 50% 50%, rgba(79, 110, 247, 0.07) 0%, rgba(79, 110, 247, 0) 70%);
+}
+
+/* Micro-interactions: Hover lifts and shadows */
+.heroCta:hover,
+.heroSec:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(79, 110, 247, 0.18);
+}
+
+.featureCard:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+  border-color: rgba(79, 110, 247, 0.3);
+}
+
+.stepItem:hover {
+  transform: translateY(-1px);
+  transition: transform var(--transition-fast);
+}
+
+/* Scorecard Entrance & Idle Animations */
+.proofCircleActive {
+  animation: fillCircle 1.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes fillCircle {
+  from {
+    stroke-dashoffset: 251.2;
+  }
+  to {
+    stroke-dashoffset: 45.2;
+  }
+}
+
+.statBarFill {
+  animation: fillBar 1.2s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  transform-origin: left;
+}
+
+@keyframes fillBar {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+.proofCard {
+  animation: idlePulse 6s ease-in-out infinite;
+  animation-delay: 1.5s; /* Begins after fill animations finish */
+}
+
+@keyframes idlePulse {
+  0%, 100% {
+    box-shadow: var(--shadow-lg);
+    border-color: var(--border-color);
+  }
+  50% {
+    box-shadow: 0 12px 28px -3px rgba(79, 110, 247, 0.09), 0 6px 12px -4px rgba(79, 110, 247, 0.09);
+    border-color: rgba(79, 110, 247, 0.25);
+  }
+}
+
+/* Scroll Reveal Animations */
+.reveal {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1), transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Factual Capability Stats Strip */
+.statsStrip {
+  max-width: 1200px;
+  width: 100%;
+  margin: 2rem auto 4rem;
+  padding: 0 2rem;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2rem;
+  text-align: center;
+}
+
+.statItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 1.5rem;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  transition: transform var(--transition-fast);
+}
+
+.statItem:hover {
+  transform: translateY(-2px);
+}
+
+.statNumberText {
+  font-size: 2.25rem; /* Large numbers */
+  font-weight: 800;
+  color: var(--accent-primary);
+  line-height: 1;
+}
+
+.statLabelText {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  max-width: 180px;
+}
+
+.capabilityLabelText {
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  line-height: 1.4;
+  text-align: center;
+  max-width: 180px;
+  width: 100%;
+}
+
+/* Tech Stack Strip styles */
+.techStackStrip {
+  max-width: 1200px;
+  width: 100%;
+  margin: 6rem auto 2rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.techLabel {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+.techBadges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.techBadge {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  padding: 0.375rem 0.875rem;
+  border-radius: var(--radius-md);
+  transition: all var(--transition-fast);
+}
+
+.techBadge:hover {
+  border-color: var(--accent-primary);
+  color: var(--accent-primary);
+  background-color: var(--accent-primary-light);
+}
+
+/* Developer Signature Footer */
+.footer {
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem 2rem;
+  border-top: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+}
+
+.footerGrid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 3rem;
+}
+
+.footerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.footerBrand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.footerLogoContainer {
+  height: 24px;
+  width: auto;
+  display: flex;
+  align-items: center;
+}
+
+.footerLogo {
+  height: 100%;
+  width: auto;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+
+.footerWordmark {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  color: var(--text-primary);
+}
+
+.footerTagline {
+  font-size: 0.8125rem;
+  color: var(--text-muted);
+}
+
+.footerRight {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.connectHeading {
+  font-size: 0.8125rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+}
+
+.socialLinks {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.socialLink {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.socialLink:hover {
+  color: var(--accent-primary);
+  border-color: var(--accent-primary);
+  background-color: var(--accent-primary-light);
+  transform: translateY(-1px);
+}
+
+.footerBottom {
+  border-top: 1px solid var(--border-color);
+  padding-top: 1.5rem;
+  text-align: center;
+}
+
+.footerBottom p {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+/* Responsiveness overrides for new layout elements */
+@media (max-width: 768px) {
+  .statsStrip {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.25rem;
+  }
+  
+  .footerGrid {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 2rem;
+  }
+  
+  .footerRight {
+    align-items: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .statsStrip {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ==========================================================================
+   NETWORK DIAGRAM & ADDITIONAL SECTION UPGRADES
+   ========================================================================== */
+
+.heroDiagram {
+  width: 100%;
+  max-width: 500px;
+}
+
+/* "Your Career, Reflected" section styles */
+.reflectedSection {
+  max-width: 1200px;
+  width: 100%;
+  margin: 8rem auto 4rem;
+  padding: 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 3rem;
+  align-items: center;
+  text-align: center;
+}
+
+.reflectedHeader {
+  max-width: 750px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.reflectedLabel {
+  font-size: 0.75rem;
+  font-weight: 800;
+  letter-spacing: 0.25em;
+  color: var(--accent-primary);
+  text-transform: uppercase;
+}
+
+.reflectedHeadline {
+  font-size: var(--landing-display, 3.5rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+}
+
+.reflectedDiagramContainer {
+  width: 100%;
+  max-width: 750px;
+  padding: 1rem 2.5rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.flowDiagram {
+  width: 100%;
+  max-width: 600px;
+}
+
+/* Final CTA Section with Signature Ring (ENLARGED BOOKEND UPGRADE) */
+.finalCtaSection {
+  max-width: 1200px;
+  width: 100%;
+  margin: 6rem auto 4rem;
+  padding: 4rem 2rem;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: visible;
+}
+
+.signatureRingContainer {
+  position: absolute;
+  width: 440px; /* Oval shape: wider than tall, half size of previous 720px */
+  height: 220px;
+  opacity: 0.35;
+  pointer-events: none;
+  user-select: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+}
+
+.signatureRingSvg {
+  width: 100%;
+  height: 100%;
+}
+
+.signatureRingBg {
+  fill: transparent;
+  stroke: var(--border-color);
+  stroke-width: 1.5;
+}
+
+.signatureRingActive {
+  fill: transparent;
+  stroke: var(--accent-primary);
+  stroke-width: 1.5;
+  stroke-dasharray: 502.4; /* 2 * PI * 80 */
+  stroke-dashoffset: 0;
+  animation: signatureSpin 45s linear infinite;
+  transform-origin: center;
+}
+
+@keyframes signatureSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.finalCtaContent {
+  position: relative;
+  z-index: 10;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  max-width: 650px;
+  padding: 0;
+}
+
+.finalCtaHeadline {
+  font-size: 3.5rem; /* Enlarged headline text */
+  font-weight: 800;
+  color: var(--text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+
+.finalCtaSub {
+  font-size: 1.125rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.finalCtaBtn {
+  margin-top: 0.75rem;
+  font-size: 1rem;
+  padding: 0.75rem 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(79, 110, 247, 0.25);
+}
+
+.finalCtaBtn:hover {
+  box-shadow: 0 6px 20px rgba(79, 110, 247, 0.35);
+}
+
+/* Responsiveness overrides for new layout elements */
+@media (max-width: 768px) {
+  .tagline,
+  .reflectedHeadline {
+    font-size: 2.5rem; /* ~40px */
+  }
+
+  .stepsStrip::after {
+    display: none; /* Hide connecting line on tablet stack */
+  }
+  
+  .reflectedSection {
+    margin: 4rem auto;
+    gap: 2rem;
+  }
+  
+  .reflectedDiagramContainer {
+    padding: 1.5rem;
+  }
+  
+  .finalCtaSection {
+    margin: 4rem auto 2rem;
+    padding: 4rem 1.5rem;
+    min-height: 300px;
+    overflow: hidden; /* Prevent ring clipping issues on small viewports */
+  }
+  
+  .finalCtaHeadline {
+    font-size: 2.25rem;
+  }
+  
+  .signatureRingContainer {
+    width: 380px;
+    height: 380px;
+  }
+}
+
+@media (max-width: 640px) {
+  .tagline,
+  .reflectedHeadline {
+    font-size: 2.25rem;
+  }
+}

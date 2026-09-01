@@ -1,0 +1,248 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.backRow {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.backBtn {
+  font-size: 0.875rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+}
+
+/* Hero Score Card Banner */
+.heroCard {
+  background-color: var(--card-bg);
+}
+
+.heroContent {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: 1rem 0;
+}
+
+.scoreChart {
+  flex-shrink: 0;
+}
+
+.heroMeta {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.titleRow h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.sessionText {
+  font-size: 0.9375rem;
+  color: var(--text-primary);
+}
+
+.dateText {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.heroActions {
+  margin-top: 0.75rem;
+  display: flex;
+}
+
+.retakeBtn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.btnIcon {
+  flex-shrink: 0;
+}
+
+/* Grid Layout */
+.layoutGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+}
+
+@media (max-width: 900px) {
+  .layoutGrid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.leftCol, .rightCol {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.metricsList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.summaryText {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+/* Talking Points Issues List */
+.issuesList {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.issueItem {
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 1.5rem;
+}
+
+.issueItem:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.issueHeader {
+  margin-bottom: 0.5rem;
+}
+
+.issueDesc {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  line-height: 1.4;
+}
+
+.suggestionBlock {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.suggestLabel {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.08em;
+}
+
+.suggestText {
+  font-size: 0.875rem;
+  color: #166534; /* Dark green suggestion text */
+  padding: 0.75rem 1rem;
+  border-radius: var(--radius-md);
+  background-color: #f0fdf4;
+  border: 1px solid #dcfce7;
+  border-left: 3px solid var(--success);
+  line-height: 1.5;
+}
+
+/* No issues State */
+.noIssues {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+}
+
+.greenCheck {
+  color: var(--success);
+  margin-bottom: 1rem;
+}
+
+.noIssues h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.noIssues p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* Loading & Error States */
+.loadingContainer, .errorContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  text-align: center;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border-color);
+  border-bottom-color: var(--accent-primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.loadingContainer p {
+  color: var(--text-secondary);
+}
+
+.errorIcon {
+  color: var(--error);
+  margin-bottom: 1rem;
+}
+
+.errorContainer h2 {
+  font-size: 1.25rem;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.errorContainer p {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .heroContent {
+    flex-direction: column;
+    text-align: center;
+    gap: 1.5rem;
+  }
+
+  .heroMeta {
+    align-items: center;
+  }
+}

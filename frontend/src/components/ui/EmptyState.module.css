@@ -1,0 +1,48 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 3rem 1.5rem;
+  background-color: var(--card-bg);
+  border: 1px dashed var(--border-color);
+  border-radius: var(--radius-lg);
+  max-width: 500px;
+  margin: 2rem auto;
+}
+
+.iconWrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+  margin-bottom: 1.25rem;
+}
+
+.icon {
+  stroke-width: 1.5px;
+}
+
+.title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: 0.5rem;
+}
+
+.description {
+  font-size: 0.875rem; /* 14px */
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+  max-width: 320px;
+  line-height: 1.4;
+}
+
+.btn {
+  font-size: 0.875rem;
+}

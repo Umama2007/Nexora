@@ -1,0 +1,156 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.pageHeader h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+}
+
+.pageHeader p {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  max-width: 800px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+}
+
+@media (max-width: 960px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.modeCard {
+  cursor: pointer;
+  border-width: 2px;
+  transition: all var(--transition-normal);
+  background-color: var(--card-bg);
+}
+
+.modeCard:hover {
+  transform: translateY(-2px);
+  border-color: var(--text-muted);
+}
+
+.selectedCard {
+  border-color: var(--accent-primary);
+  box-shadow: 0 4px 12px rgba(79, 110, 247, 0.1);
+}
+
+.selectedCard:hover {
+  border-color: var(--accent-primary);
+}
+
+.disabledCard {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.disabledCard:hover {
+  transform: none;
+  border-color: var(--border-color);
+  box-shadow: var(--shadow-sm);
+}
+
+.cardHeader {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.iconContainer {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+}
+
+.selectedIcon {
+  background-color: var(--accent-primary-light);
+  color: var(--accent-primary);
+}
+
+.meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.modeTitle {
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.modeDesc {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.5rem;
+  min-height: 63px; /* Keeps cards aligned on desktop */
+}
+
+@media (max-width: 960px) {
+  .modeDesc {
+    min-height: auto;
+  }
+}
+
+.bulletList {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+}
+
+.bulletItem {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.bulletCheck {
+  color: var(--accent-primary);
+  flex-shrink: 0;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.warnText {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8125rem;
+  color: var(--error);
+  font-weight: 500;
+}
+
+.startBtn {
+  font-size: 0.9375rem;
+  padding: 0.75rem 2rem;
+  font-weight: 600;
+}

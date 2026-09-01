@@ -1,0 +1,50 @@
+.layout {
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+}
+
+.mainWrapper {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-left: 260px; /* Offset for fixed sidebar */
+  min-height: 100vh;
+  background-color: var(--bg-primary);
+  transition: margin var(--transition-normal);
+}
+
+.content {
+  flex: 1;
+  padding: 2rem;
+  overflow-y: auto;
+}
+
+.pageContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  animation: fadeIn var(--transition-normal);
+}
+
+/* Mobile styles */
+@media (max-width: 768px) {
+  .mainWrapper {
+    margin-left: 0; /* Full-width main panel on mobile */
+  }
+
+  .content {
+    padding: 1.25rem 1rem;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
