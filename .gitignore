@@ -116,6 +116,13 @@ yarn-debug.log*
 yarn-error.log*
 
 # ---------------------------------------------------------------------------
+# Backend test / debug scripts — one-off diagnostics created during
+# development sessions. These frequently contain hardcoded API keys or
+# environment-specific paths and must NEVER be committed.
+# ---------------------------------------------------------------------------
+backend/test_*.py
+
+# ---------------------------------------------------------------------------
 # NOTE: .kiro/specs/ is intentionally NOT listed here.
 # That folder contains the hackathon spec documents and must be committed.
 # ---------------------------------------------------------------------------

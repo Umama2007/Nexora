@@ -49,19 +49,28 @@ def startup_event():
     import threading
     def warmup():
         from app.core.llm_client import generate_completion
-        from app.core.rag_pipeline import get_rag_model
         try:
-            print("[WARMUP] Touching SentenceTransformer...")
-            t0 = time.perf_counter()
-            get_rag_model()
-            t1 = time.perf_counter()
-            print(f"[TIMING] Model load took {t1 - t0:.2f}s")
-
             if LLM_PROVIDER == "ollama":
+                # In Ollama mode, pre-load the SentenceTransformer embedding
+                # model and ping the local LLM so the first real request is
+                # fast. This pulls in torch (~100 MB) but that's expected on
+                # a machine running a local LLM.
+                from app.core.rag_pipeline import get_rag_engine
+                print("[WARMUP] Touching SentenceTransformer...")
+                t0 = time.perf_counter()
+                get_rag_engine()._get_model()
+                t1 = time.perf_counter()
+                print(f"[TIMING] Model load took {t1 - t0:.2f}s")
+
                 print("[WARMUP] Touching Ollama...")
                 generate_completion("Hello, this is a warmup.", system="You are helpful.")
             else:
-                print(f"[WARMUP] Gemini provider active ({LLM_PROVIDER}) — skipping warmup (first call validates key).")
+                # In Gemini mode, skip ALL heavy imports. torch/transformers/
+                # chromadb stay unloaded until someone actually starts an
+                # interview (the only feature that needs RAG). This keeps the
+                # server's RSS under ~80 MB at boot — critical for Render's
+                # 512 MB free tier.
+                print(f"[WARMUP] Gemini provider active ({LLM_PROVIDER}) — skipping heavy model warmup.")
             print("[WARMUP] Complete.")
         except Exception as e:
             print(f"Warmup failed: {e}")

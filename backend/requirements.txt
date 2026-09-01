@@ -1,10 +1,15 @@
+# Core dependencies — sufficient for Gemini mode deployment.
+# Gemini mode uses cloud LLM + cloud embeddings, zero ML packages needed.
+#
+# Ollama mode (local dev) additionally requires:
+#   pip install sentence-transformers chromadb
+# These pull in torch (~200 MB CPU build) + transformers + numpy.
+# They are intentionally omitted so Gemini-mode deploys (e.g. Render free
+# tier at 512 MB) never install or import them.
+
 fastapi
 uvicorn
 pymupdf
 python-docx
-sentence-transformers
-chromadb
-langchain
 python-multipart
-google-genai
 python-dotenv
