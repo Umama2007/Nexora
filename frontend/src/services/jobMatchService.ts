@@ -1,6 +1,5 @@
 import { JobMatch } from '../types';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from '../config';
 
 // Pre-v2 key stored simulated (Math.random-based) match results — remove it
 // once so no fake data can resurface.

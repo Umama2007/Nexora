@@ -1,6 +1,5 @@
 import { InterviewSession, InterviewFeedback } from '../types';
-
-const API_BASE = 'http://127.0.0.1:8000/api';
+import { API_BASE } from '../config';
 
 async function handle<T>(res: Response): Promise<T> {
   if (!res.ok) {

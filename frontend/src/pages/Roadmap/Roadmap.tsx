@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { resumeService } from '../../services/resumeService';
+import { API_BASE } from '../../config';
 import { Roadmap as RoadmapType } from '../../types';
 import styles from './Roadmap.module.css';
 
@@ -64,7 +65,7 @@ export const Roadmap: React.FC = () => {
       setErrorMsg('');
 
       try {
-        const response = await fetch('http://127.0.0.1:8000/api/roadmap', {
+        const response = await fetch(`${API_BASE}/roadmap`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ targetRole: role, missingSkills: skills })
@@ -76,12 +77,12 @@ export const Roadmap: React.FC = () => {
 
         const pollInterval = setInterval(async () => {
           try {
-            const statusRes = await fetch(`http://127.0.0.1:8000/api/roadmap/${roadmapId}/status`);
+            const statusRes = await fetch(`${API_BASE}/roadmap/${roadmapId}/status`);
             if (statusRes.ok) {
               const statusData = await statusRes.json();
               if (statusData.status === 'completed') {
                 clearInterval(pollInterval);
-                const rmRes = await fetch(`http://127.0.0.1:8000/api/roadmap/${roadmapId}`);
+                const rmRes = await fetch(`${API_BASE}/roadmap/${roadmapId}`);
                 if (rmRes.ok) {
                   const rmData = await rmRes.json();
                   setRoadmap(rmData);

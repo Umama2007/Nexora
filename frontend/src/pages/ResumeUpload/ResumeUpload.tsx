@@ -4,6 +4,7 @@ import { UploadCloud, FileText, CheckCircle2, AlertCircle, RefreshCw } from 'luc
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { resumeService } from '../../services/resumeService';
+import { API_BASE } from '../../config';
 import styles from './ResumeUpload.module.css';
 
 export const ResumeUpload: React.FC = () => {
@@ -124,7 +125,7 @@ export const ResumeUpload: React.FC = () => {
       formData.append('careerLevel', careerLevel);
       formData.append('jobDescription', jobDescription.trim());
 
-      const response = await fetch('http://127.0.0.1:8000/api/resumes/upload', {
+      const response = await fetch(`${API_BASE}/resumes/upload`, {
         method: 'POST',
         body: formData,
       });
@@ -136,7 +137,7 @@ export const ResumeUpload: React.FC = () => {
       // Start polling
       const pollInterval = setInterval(async () => {
         try {
-          const statusRes = await fetch(`http://127.0.0.1:8000/api/resumes/${resumeId}/status`);
+          const statusRes = await fetch(`${API_BASE}/resumes/${resumeId}/status`);
           if (statusRes.ok) {
             const statusData = await statusRes.json();
             
