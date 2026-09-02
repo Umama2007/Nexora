@@ -77,7 +77,12 @@ export const InterviewRoom: React.FC = () => {
       }
     } catch (err) {
       setIsAiTyping(false);
-      setSubmitError(err instanceof Error ? err.message : 'Failed to send your message.');
+      const message = err instanceof Error ? err.message : 'Failed to send your message.';
+      if (message.includes('temporarily at capacity') || message.includes('AI_PROVIDERS_EXHAUSTED')) {
+        setSubmitError('Our AI service is temporarily at capacity — please try again in a few minutes.');
+      } else {
+        setSubmitError(message);
+      }
       // Resync with the server: the optimistic message was never persisted
       const fresh = await interviewService.getSession(sessionId);
       if (fresh) setSession(fresh);

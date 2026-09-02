@@ -1,4 +1,5 @@
 from fastapi import FastAPI, UploadFile, File, Form, BackgroundTasks, HTTPException
+from fastapi.responses import JSONResponse
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import Optional, List, Dict
@@ -16,13 +17,29 @@ except ImportError:
     pass  # python-dotenv not installed — env vars must be set externally
 
 from app.core.database import get_db, init_db
-from app.core.llm_client import LLM_PROVIDER, validate_provider
+from app.core.llm_client import LLM_PROVIDER, validate_provider, AllProvidersExhaustedError
 from app.api.job_match import analyze_job_match
 from app.api.roadmap import generate_roadmap
 from app.api.interview import start_interview_session, chat_turn, generate_opening_question, score_interview
 from app.api.tailor import generate_tailored_resume
 
 app = FastAPI(title="Nexora API")
+
+
+@app.exception_handler(AllProvidersExhaustedError)
+def all_providers_exhausted_handler(request, exc: AllProvidersExhaustedError):
+    """Returns a structured, frontend-friendly 503 when every AI provider
+    key is exhausted or unavailable."""
+    return JSONResponse(
+        status_code=503,
+        content={
+            "detail": "Our AI service is temporarily at capacity — please try again in a few minutes.",
+            "error_code": "AI_PROVIDERS_EXHAUSTED",
+            "retry_after_seconds": 60,
+        },
+        headers={"Retry-After": "60"},
+    )
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -244,6 +261,13 @@ async def run_async_analysis(resume_id: str, file_path: str, target_role: str, j
         print(f"[TIMING] run_async_analysis DETAILED end-to-end: {t2 - t1:.2f}s")
         print(f"[TIMING] run_async_analysis TOTAL end-to-end: {t2 - t0:.2f}s")
         
+    except AllProvidersExhaustedError as e:
+        _progress_store[resume_id] = {
+            "status": "error",
+            "error_code": "AI_PROVIDERS_EXHAUSTED",
+            "message": "Our AI service is temporarily at capacity — please try again in a few minutes.",
+            "retry_after_seconds": 60,
+        }
     except Exception as e:
         _progress_store[resume_id] = {"status": "error", "message": str(e)}
         # Flag any in-flight row so polling clients stop waiting for detailed data

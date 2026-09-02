@@ -156,7 +156,11 @@ export const ResumeUpload: React.FC = () => {
               clearInterval(pollInterval);
               clearInterval(elapsedTimer);
               setUploadState('error');
-              setErrorMsg(statusData.message || 'Analysis failed.');
+              if (statusData.error_code === 'AI_PROVIDERS_EXHAUSTED') {
+                setErrorMsg('Our AI service is temporarily at capacity — please try again in a few minutes.');
+              } else {
+                setErrorMsg(statusData.message || 'Analysis failed.');
+              }
             }
           }
         } catch (err) {

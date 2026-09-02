@@ -40,14 +40,13 @@ def _facts_summary(truth_facts: dict) -> str:
     return "\n".join(lines) if lines else "No resume facts extracted."
 
 
-def _system_prompt(session_id: str, interview_type: str, truth_facts: dict, target_role: str, rag_query: str) -> str:
+def _system_prompt(session_id: str, interview_type: str, truth_facts: dict, target_role: str, rag_context: str) -> str:
     template = _load_prompt(_MODE_PROMPTS.get(interview_type, _MODE_PROMPTS["Technical"]))
-    context = get_interview_context(session_id, rag_query, k=2)
     return (
         template
         .replace("[TARGET_ROLE]", target_role or "the target role")
         .replace("[FACTS]", _facts_summary(truth_facts))
-        .replace("[RAG_CONTEXT]", context or "None")
+        .replace("[RAG_CONTEXT]", rag_context or "None")
     )
 
 
@@ -59,7 +58,8 @@ def start_interview_session(session_id: str, truth_facts: dict) -> dict:
 
 def generate_opening_question(session_id: str, interview_type: str, truth_facts: dict, target_role: str) -> str:
     """First interviewer message: mode-specific and grounded in the resume facts."""
-    system_prompt = _system_prompt(session_id, interview_type, truth_facts, target_role, target_role)
+    rag_context = get_interview_context(session_id, target_role, k=2)
+    system_prompt = _system_prompt(session_id, interview_type, truth_facts, target_role, rag_context)
     prompt = (
         "This is the very first message of the interview. Greet the candidate in one short "
         "sentence and ask your FIRST question now, following your interviewing style above.\n\n"
@@ -78,8 +78,13 @@ def chat_turn(session_id: str, user_message: str, chat_history: List[Dict[str, s
 
     truth_facts = truth_facts or {}
 
-    # 1. Mode-branched system prompt with Truth Guard grounding (FR-8)
-    system_prompt = _system_prompt(session_id, interview_type, truth_facts, target_role, user_message)
+    # 1. Retrieve RAG context once and reuse it for both the system prompt and
+    # the debug metadata returned to the frontend. Previously this was called
+    # twice per turn (inside _system_prompt and again for rag_context_used).
+    rag_context = get_interview_context(session_id, user_message, k=2)
+
+    # 2. Mode-branched system prompt with Truth Guard grounding (FR-8)
+    system_prompt = _system_prompt(session_id, interview_type, truth_facts, target_role, rag_context)
 
     # 2. Format History
     history_str = ""
@@ -112,7 +117,7 @@ def chat_turn(session_id: str, user_message: str, chat_history: List[Dict[str, s
     return {
         "response": ai_response,
         "timing_seconds": end_time - start_time,
-        "rag_context_used": get_interview_context(session_id, user_message, k=2)
+        "rag_context_used": rag_context
     }
 
 

@@ -40,7 +40,12 @@ export const InterviewModeSelect: React.FC = () => {
       navigate(`/interview/${session.id}`);
     } catch (err) {
       setIsStarting(false);
-      setStartError(err instanceof Error ? err.message : 'Failed to start the interview.');
+      const message = err instanceof Error ? err.message : 'Failed to start the interview.';
+      if (message.includes('temporarily at capacity') || message.includes('AI_PROVIDERS_EXHAUSTED')) {
+        setStartError('Our AI service is temporarily at capacity — please try again in a few minutes.');
+      } else {
+        setStartError(message);
+      }
     }
   };
 
