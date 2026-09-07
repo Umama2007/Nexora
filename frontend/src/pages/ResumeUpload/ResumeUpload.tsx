@@ -145,9 +145,8 @@ export const ResumeUpload: React.FC = () => {
               setProgressStage(statusData.progress_stage);
             }
             
-            // The fast path (score + missing keywords) is enough to open the
-            // results page — detailed feedback keeps generating in the background.
-            if (statusData.status === 'fast_completed' || statusData.status === 'completed') {
+            // We wait for the comprehensive analysis to complete
+            if (statusData.status === 'completed') {
               clearInterval(pollInterval);
               clearInterval(elapsedTimer);
               setUploadState('success');
@@ -275,21 +274,21 @@ export const ResumeUpload: React.FC = () => {
               <RefreshCw className={styles.pulseIcon} size={48} />
               <h3>Analyzing your resume...</h3>
               <p className={styles.helpText}>
-                {progressStage === 0 && "Parsing your resume and running Truth Guard extraction..."}
-                {progressStage === 1 && "Facts verified. Calculating your fast ATS score..."}
-                {progressStage === 2 && "Score ready! Opening your report..."}
-                {progressStage === 3 && "Generating detailed feedback..."}
-                {progressStage === 4 && "Finalizing your report..."}
+                {progressStage === 0 && "Parsing your resume..."}
+                {progressStage === 1 && "Extracting Truth Guard facts..."}
+                {progressStage === 2 && "Analyzing your resume against the target role..."}
+                {progressStage === 3 && "Finalizing your report..."}
+                {progressStage === 4 && "Opening your report..."}
               </p>
               <p className={styles.elapsedText}>Elapsed: {elapsedSeconds}s</p>
               <div className={styles.progressBarWrapper}>
                 <div 
                   className={styles.progressBarFill} 
-                  style={{ width: `${Math.min(100, 30 + progressStage * 32)}%`, transition: 'width 0.5s ease-in-out' }} 
+                  style={{ width: `${Math.min(100, 20 + progressStage * 20)}%`, transition: 'width 0.5s ease-in-out' }} 
                 />
               </div>
               <p className={styles.splitNote}>
-                Your score usually arrives within a minute or two — detailed suggestions keep generating on the results page.
+                Your comprehensive report usually arrives within 15-30 seconds, depending on resume length.
               </p>
             </div>
           )}

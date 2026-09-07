@@ -8,7 +8,6 @@ import { ProgressBar } from '../../components/ui/ProgressBar';
 import { RadialScore } from '../../components/charts/RadialScore';
 import { resumeService } from '../../services/resumeService';
 import { profileService } from '../../services/profileService';
-import { useAnalysisPolling } from '../../hooks/useAnalysisPolling';
 import { Resume, ResumeAnalysis } from '../../types';
 import styles from './AnalysisResults.module.css';
 
@@ -18,9 +17,6 @@ export const AnalysisResults: React.FC = () => {
   const [resume, setResume] = useState<Resume | null>(null);
   const [analysis, setAnalysis] = useState<ResumeAnalysis | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-
-  // Poll every 3s while the detailed path is still generating (fast/detailed split)
-  useAnalysisPolling(analysis, setAnalysis);
 
   // Phase 2: once an analysis exists (the fast path already carries the
   // Truth Guard facts), fill any blank profile fields automatically. The
@@ -76,9 +72,8 @@ export const AnalysisResults: React.FC = () => {
 
   const { score, status, breakdown, summary, strengths, improvements } = analysis;
 
-  // Fast-path data (score, breakdown, missing keywords) is already available here;
-  // the detailed path (summary, strengths, improvements) may still be generating.
-  const detailedPending = analysis.analysisStatus === 'fast_completed';
+  // The detailed path is generated in one shot now.
+  const detailedPending = false;
   const detailedFailed = analysis.analysisStatus === 'error';
   const missingKeywords = breakdown.missing_keywords ?? [];
   // FR-3: keywords may be matched against a pasted job description or the
@@ -175,13 +170,7 @@ export const AnalysisResults: React.FC = () => {
 
           {/* Overall AI Summary Assessment (detailed path) */}
           <Card title="AI Executive Summary" className={styles.summaryCard}>
-            {detailedPending ? (
-              <div className={styles.skeletonList} aria-hidden="true">
-                <span className={styles.skeletonLine} style={{ width: '100%' }} />
-                <span className={styles.skeletonLine} style={{ width: '94%' }} />
-                <span className={styles.skeletonLine} style={{ width: '62%' }} />
-              </div>
-            ) : detailedFailed ? (
+            {detailedFailed ? (
               <p className={styles.summaryText}>Detailed summary is unavailable for this analysis.</p>
             ) : (
               <p className={styles.summaryText}>{summary}</p>
@@ -191,36 +180,7 @@ export const AnalysisResults: React.FC = () => {
 
         {/* Strengths & Improvements (detailed path) */}
         <div className={styles.rightCol}>
-          {detailedPending ? (
-            <>
-              <Card title="Key Strengths" className={styles.strengthsCard}>
-                <div className={styles.skeletonList} aria-hidden="true">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className={styles.skeletonRow}>
-                      <span className={styles.skeletonDot} />
-                      <span className={styles.skeletonLine} style={{ width: `${92 - i * 14}%` }} />
-                    </div>
-                  ))}
-                </div>
-              </Card>
-
-              <Card title="Areas to Improve">
-                <div className={styles.generatingNote}>
-                  <span className={styles.miniSpinner} />
-                  <span>Generating detailed feedback — strengths and suggestions will appear here in the next minute or two.</span>
-                </div>
-                <div className={styles.skeletonList} aria-hidden="true">
-                  {[0, 1, 2].map((i) => (
-                    <div key={i} className={styles.skeletonBlock}>
-                      <span className={styles.skeletonLine} style={{ width: '38%' }} />
-                      <span className={styles.skeletonLine} style={{ width: `${88 - i * 8}%` }} />
-                      <span className={styles.skeletonLine} style={{ width: `${68 - i * 8}%` }} />
-                    </div>
-                  ))}
-                </div>
-              </Card>
-            </>
-          ) : detailedFailed ? (
+          {detailedFailed ? (
             <Card className={styles.detailedErrorCard}>
               <div className={styles.detailedError}>
                 <AlertTriangle size={20} className={styles.detailedErrorIcon} />

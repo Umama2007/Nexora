@@ -2,12 +2,36 @@ import { Resume, ResumeAnalysis, UserProfile } from '../types';
 import { resumeService } from './resumeService';
 
 const PROFILE_KEY = 'nexora_profile_v2';
+// Schema marker for the stored profile. v1 (marker absent) profiles were
+// populated by the pre-fix local Truth Guard extractor and may be missing
+// the resume-derived name/education/projects.
+const PROFILE_SCHEMA_KEY = 'nexora_profile_schema';
+const PROFILE_SCHEMA_VERSION = '2';
 // Last resume the automatic population ran for. Prevents re-filling a field
 // the user deliberately cleared whenever they revisit the same analysis.
 const AUTOFILL_LAST_RESUME_KEY = 'nexora_profile_autofill_last_resume';
 // Pre-v2 key held a hardcoded demo profile ("Alex Chen") — remove it once so
 // no fake data can resurface.
 localStorage.removeItem('nexora_profile');
+
+/**
+ * One-time, non-destructive migration for profiles stored before the
+ * Truth Guard extractor fix. It never edits or clears stored values — it
+ * only re-arms the once-per-resume auto-population guard, so blank
+ * resume-derived fields (name, education, projects) can re-fill from the
+ * fixed extractor's facts the next time an analysis page is visited.
+ * Manual edits stay untouched (auto-populate only fills blank fields);
+ * "Update from Latest Resume" remains the explicit full refresh.
+ */
+function migrateProfileSchema(): void {
+  const stored = localStorage.getItem(PROFILE_SCHEMA_KEY);
+  if (stored === PROFILE_SCHEMA_VERSION) return;
+  if (stored === null && localStorage.getItem(PROFILE_KEY) !== null) {
+    localStorage.removeItem(AUTOFILL_LAST_RESUME_KEY);
+  }
+  localStorage.setItem(PROFILE_SCHEMA_KEY, PROFILE_SCHEMA_VERSION);
+}
+migrateProfileSchema();
 
 export function emptyProfile(): UserProfile {
   return {

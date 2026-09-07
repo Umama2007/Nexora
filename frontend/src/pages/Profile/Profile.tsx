@@ -310,7 +310,7 @@ export const Profile: React.FC = () => {
           <div className={styles.faqList}>
             <div className={styles.faqItem}>
               <h4>Where is my data stored?</h4>
-              <p>Resumes, analyses, and interview sessions live in a local SQLite database on this machine, served by the local backend. Your profile and UI preferences stay in your browser's localStorage. Nothing leaves your laptop.</p>
+              <p>Resume files, analyses, and interview data are stored in the local SQLite database while running locally. When Gemini mode is enabled, the text required for AI analysis is securely sent to the configured Gemini API. Profile preferences remain in this browser's localStorage.</p>
             </div>
 
             <div className={styles.faqItem}>
@@ -320,7 +320,7 @@ export const Profile: React.FC = () => {
 
             <div className={styles.faqItem}>
               <h4>Is my connection secure?</h4>
-              <p>All processing — parsing, storage, and LLM inference — runs locally on this machine. No resume data is sent to any third-party service.</p>
+              <p>AI requests in Gemini mode travel over encrypted HTTPS to the configured Gemini API. In fully local mode, all parsing, storage, and inference stay on this machine and nothing is sent to any third-party service.</p>
             </div>
           </div>
         </Card>

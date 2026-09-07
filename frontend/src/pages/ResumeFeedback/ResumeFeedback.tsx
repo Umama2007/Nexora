@@ -5,7 +5,6 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { resumeService } from '../../services/resumeService';
-import { useAnalysisPolling } from '../../hooks/useAnalysisPolling';
 import { Resume, ResumeAnalysis, ImprovementItem, TailorResult } from '../../types';
 import styles from './ResumeFeedback.module.css';
 
@@ -74,9 +73,6 @@ export const ResumeFeedback: React.FC = () => {
     };
   }, [id]);
 
-  // Poll every 3s while the detailed path is still generating (fast/detailed split)
-  useAnalysisPolling(analysis, setAnalysis);
-
   const handleApply = async (impId: string) => {
     if (!id) return;
     const updated = await resumeService.updateImprovementStatus(id, impId, 'applied');
@@ -115,41 +111,6 @@ export const ResumeFeedback: React.FC = () => {
     );
   }
 
-  // Skeleton state while the detailed path is still generating — the fast
-  // path (score) is ready, but everything on this page needs detailed data.
-  if (analysis.analysisStatus === 'fast_completed') {
-    return (
-      <div className={styles.container}>
-        <div className={styles.backRow}>
-          <Button variant="ghost" onClick={() => navigate(`/analysis/${id}`)} className={styles.backBtn}>
-            <ArrowLeft size={16} />
-            Back to Report
-          </Button>
-          <div className={styles.metaInfo}>
-            <span className={styles.filename}>{resume.filename}</span>
-            <Badge variant="primary">Score: {analysis.score}/100</Badge>
-          </div>
-        </div>
-
-        <Card className={styles.generatingCard}>
-          <div className={styles.generatingBody}>
-            <div className={styles.spinner} />
-            <h3>Generating detailed feedback...</h3>
-            <p className={styles.generatingText}>
-              Your score is ready. Detailed improvement suggestions are still being generated —
-              this page will update automatically.
-            </p>
-            <div className={styles.skeletonLines} aria-hidden="true">
-              <span className={styles.skeletonLine} style={{ width: '42%' }} />
-              <span className={styles.skeletonLine} style={{ width: '92%' }} />
-              <span className={styles.skeletonLine} style={{ width: '85%' }} />
-              <span className={styles.skeletonLine} style={{ width: '66%' }} />
-            </div>
-          </div>
-        </Card>
-      </div>
-    );
-  }
 
   const tabs: { value: typeof activeTab; label: string; icon: React.ComponentType<{ size?: number }> }[] = [
     { value: 'Overview', label: 'Overview', icon: BookOpen },

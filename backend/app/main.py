@@ -101,67 +101,86 @@ def health_check():
 # --- RESUME ANALYSIS ---
 
 async def run_async_analysis(resume_id: str, file_path: str, target_role: str, job_description: str = ""):
-    """Runs the split fast/detailed analysis pipeline.
-
-    Truth Guard extraction runs ONCE, early, so its facts ground BOTH the
-    fast prompt (score/verdict, FR-8) and the detailed prompt. The analyses
-    row is written twice: after the fast path (analysisStatus =
-    'fast_completed', which releases the frontend), then updated after the
-    detailed path (analysisStatus = 'completed').
-
-    When a job description was pasted at upload, the fast path compares
-    missing keywords against the JD instead of the bare role name (FR-3).
-    """
+    """Runs the single-shot analysis pipeline."""
     _progress_store[resume_id] = {"status": "processing", "score_data": None, "improvements_data": None, "truth_facts": None, "missing_keywords": None, "progress_stage": 0}
     analysis_id = f"analysis-{resume_id}"
     
     try:
-        from app.api.resume import analyze_resume_fast, analyze_resume_detailed
+        from app.api.resume import analyze_resume_once
         from app.core.pdf_parser import extract_resume_text
         from app.core.truth_guard import extract_truth_guard_facts
         import asyncio
+        import hashlib
         
         t0 = time.perf_counter()
         
-        # 1. Extract text (PDF or DOCX — the frontend accepts both, FR-1)
+        # 1. Extract text
         print("Extracting resume text...")
         loop = asyncio.get_event_loop()
         resume_text = await loop.run_in_executor(None, extract_resume_text, file_path)
         
-        # 2. Extract Truth Facts
-        print("Extracting Truth Guard facts...")
+        # Compute hash for caching. The version salt is bumped whenever the
+        # local Truth Guard extractor changes what it extracts — analyses
+        # cached under the old salt (e.g. missing name/education) must never
+        # be reused, so the next upload of the same resume re-analyzes once.
+        hash_input = f"{resume_text}|{target_role}|{job_description}|v2".encode("utf-8")
+        input_hash = hashlib.sha256(hash_input).hexdigest()
+        
+        # Check cache
+        conn = get_db()
+        try:
+            cached_row = conn.execute("SELECT * FROM analyses WHERE inputHash = ? AND analysisStatus = 'completed' LIMIT 1", (input_hash,)).fetchone()
+            if cached_row:
+                print("[CACHE] Found cached analysis for this input.")
+                conn.execute(
+                    'INSERT INTO analyses (id, resumeId, score, status, breakdown, summary, strengths, improvements, truthFacts, analysisStatus, inputHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                    (analysis_id, resume_id, cached_row["score"], cached_row["status"], cached_row["breakdown"], cached_row["summary"], cached_row["strengths"], cached_row["improvements"], cached_row["truthFacts"], "completed", input_hash)
+                )
+                conn.commit()
+                
+                # Update progress store so frontend polling picks it up
+                _progress_store[resume_id] = {
+                    "status": "completed",
+                    "score_data": {"score": cached_row["score"], "status": cached_row["status"]},
+                    "missing_keywords": [],
+                    "improvements_data": {},
+                    "truth_facts": json.loads(cached_row["truthFacts"] or "{}"),
+                    "progress_stage": 4,
+                    "analysis_id": analysis_id
+                }
+                t1 = time.perf_counter()
+                print(f"[TIMING] run_async_analysis CACHE HIT: {t1 - t0:.2f}s")
+                return
+        finally:
+            conn.close()
+
+        # 2. Extract Truth Facts Locally
+        print("Extracting Truth Guard facts locally...")
         truth_facts = await loop.run_in_executor(None, extract_truth_guard_facts, resume_text)
         _progress_store[resume_id]["truth_facts"] = truth_facts
         _progress_store[resume_id]["progress_stage"] = 1
         
-        # 3. Fast Analysis (JD-aware when a job description was provided)
-        # The small local model occasionally generates malformed JSON. One
-        # retry is usually enough; a second failure is treated as a genuine
-        # error so the row lands with an honest 'error' status.
-        fast_result = await analyze_resume_fast(resume_text, truth_facts, target_role, job_description)
-        score_data = fast_result.get("score_data", {})
-        missing_keywords = fast_result.get("missing_keywords", [])
+        # 3. Single LLM Analysis Call
+        print("Running unified LLM analysis...")
+        _progress_store[resume_id]["progress_stage"] = 2
         
-        if not isinstance(score_data, dict) or score_data.get("score") is None:
-            print("[RETRY] Fast analysis parse failed, retrying once...")
-            fast_result = await analyze_resume_fast(resume_text, truth_facts, target_role, job_description)
-            score_data = fast_result.get("score_data", {})
-            missing_keywords = fast_result.get("missing_keywords", [])
+        unified_result = await analyze_resume_once(resume_text, truth_facts, target_role, job_description)
         
-        if not isinstance(score_data, dict) or score_data.get("score") is None:
-            raise RuntimeError(f"Fast analysis output was unreadable after retry: {str(fast_result.get('error', ''))[:200]}")
+        score_data = unified_result.get("score_data", {})
+        missing_keywords = unified_result.get("missing_keywords", [])
+        imp_data = unified_result.get("improvements_data", {})
         
-        # Small local models sometimes forget to populate missing_keywords
-        # even when the verdict_reason mentions them. Deterministic fallback:
-        # scan the JD for tech terms not in the Truth Guard facts (FR-3).
+        # If output was malformed, unified_result has 'error'. Do NOT retry.
+        if "error" in unified_result or not isinstance(score_data, dict) or score_data.get("score") is None:
+            raise RuntimeError(f"Analysis LLM output was unreadable: {str(unified_result.get('error', ''))[:200]}")
+            
+        # Deterministic fallback for missing keywords
         if not missing_keywords and job_description:
             from app.core.grounding import TECH_TERMS, DISPLAY_NAMES
             allowed = {str(s).strip().lower() for cat in ("skills", "tools") for s in (truth_facts.get(cat, []) or [])}
             jd_lower = job_description.lower()
             for term in TECH_TERMS:
                 if term in jd_lower and not any(term in a or a in term for a in allowed if len(a) >= 3):
-                    # Proper casing: check display-name map first, then
-                    # short-acronym upper, then .title() fallback.
                     display = DISPLAY_NAMES.get(term)
                     if display:
                         missing_keywords.append(display)
@@ -174,8 +193,7 @@ async def run_async_analysis(resume_id: str, file_path: str, target_role: str, j
                     if len(missing_keywords) >= 10:
                         break
         
-        # Normalize the verdict label so it is consistent with the score
-        # (small models sometimes pick a label that doesn't match the number).
+        # Normalize the verdict label
         raw_score = score_data.get("score", 0)
         if raw_score >= 85:
             score_data["status"] = "Outstanding"
@@ -188,78 +206,38 @@ async def run_async_analysis(resume_id: str, file_path: str, target_role: str, j
         
         _progress_store[resume_id]["score_data"] = score_data
         _progress_store[resume_id]["missing_keywords"] = missing_keywords
-        _progress_store[resume_id]["progress_stage"] = 2
+        _progress_store[resume_id]["improvements_data"] = imp_data
+        _progress_store[resume_id]["progress_stage"] = 3
         
+        # 4. Save to DB
         conn = get_db()
-        # The analyses table has no dedicated missing_keywords column, so the
-        # fast-path keywords ride along inside the breakdown JSON payload.
-        # try/finally guarantees the connection is released even if the write
-        # fails - the except block below opens its own connection, and a
-        # leaked one could still hold SQLite's write lock.
         try:
             breakdown = score_data.get("breakdown", {})
             breakdown["missing_keywords"] = missing_keywords
-            # Record what the keywords were matched against, so the UI can
-            # label them honestly (FR-3), plus the FR-5 verdict reason.
             breakdown["keyword_source"] = "job_description" if job_description else "target_role"
             breakdown["verdict_reason"] = score_data.get("verdict_reason", "")
             
-            conn.execute('INSERT INTO analyses (id, resumeId, score, status, breakdown, summary, strengths, improvements, truthFacts, analysisStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            conn.execute('INSERT INTO analyses (id, resumeId, score, status, breakdown, summary, strengths, improvements, truthFacts, analysisStatus, inputHash) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                         (analysis_id, resume_id, 
                          score_data.get("score"), 
                          score_data.get("status"), 
                          json.dumps(breakdown), 
-                         "", 
-                         "[]", 
-                         "[]",
-                         json.dumps(truth_facts),
-                         "fast_completed"))
-            conn.commit()
-        finally:
-            conn.close()
-        
-        _progress_store[resume_id]["status"] = "fast_completed"
-        _progress_store[resume_id]["analysis_id"] = analysis_id
-        
-        t1 = time.perf_counter()
-        print(f"[TIMING] run_async_analysis FAST end-to-end: {t1 - t0:.2f}s")
-        
-        # 4. Detailed Analysis
-        _progress_store[resume_id]["progress_stage"] = 3
-        detailed_result = await analyze_resume_detailed(resume_text, truth_facts, target_role)
-        
-        imp_data = detailed_result.get("improvements_data", {})
-        
-        # A parse failure (_parse_json fallback) or a truncated generation
-        # yields no usable detailed data. Persisting it as 'completed' would
-        # silently show empty strengths/improvements — flag the row as an
-        # error so the frontend surfaces its honest retry state instead.
-        detailed_ok = isinstance(imp_data, dict) and bool(
-            imp_data.get("summary") or imp_data.get("strengths") or imp_data.get("improvements")
-        )
-        
-        _progress_store[resume_id]["improvements_data"] = imp_data
-        _progress_store[resume_id]["progress_stage"] = 4
-        
-        conn = get_db()
-        try:
-            conn.execute('UPDATE analyses SET summary = ?, strengths = ?, improvements = ?, analysisStatus = ? WHERE id = ?',
-                        (imp_data.get("summary", ""), 
+                         imp_data.get("summary", ""), 
                          json.dumps(imp_data.get("strengths", [])), 
                          json.dumps(imp_data.get("improvements", [])),
-                         "completed" if detailed_ok else "error",
-                         analysis_id))
+                         json.dumps(truth_facts),
+                         "completed",
+                         input_hash))
             conn.commit()
         finally:
             conn.close()
         
-        _progress_store[resume_id]["status"] = "completed" if detailed_ok else "error"
-        if not detailed_ok:
-            _progress_store[resume_id]["message"] = "Detailed feedback could not be generated (LLM output was truncated or unreadable)."
+        _progress_store[resume_id]["status"] = "completed"
+        _progress_store[resume_id]["analysis_id"] = analysis_id
+        _progress_store[resume_id]["progress_stage"] = 4
         
-        t2 = time.perf_counter()
-        print(f"[TIMING] run_async_analysis DETAILED end-to-end: {t2 - t1:.2f}s")
-        print(f"[TIMING] run_async_analysis TOTAL end-to-end: {t2 - t0:.2f}s")
+        t1 = time.perf_counter()
+        print(f"[TIMING] run_async_analysis TOTAL end-to-end: {t1 - t0:.2f}s")
         
     except AllProvidersExhaustedError as e:
         _progress_store[resume_id] = {
@@ -270,16 +248,10 @@ async def run_async_analysis(resume_id: str, file_path: str, target_role: str, j
         }
     except Exception as e:
         _progress_store[resume_id] = {"status": "error", "message": str(e)}
-        # Flag any in-flight row so polling clients stop waiting for detailed data
         try:
             conn = get_db()
             try:
-                conn.execute("UPDATE analyses SET analysisStatus = 'error' WHERE resumeId = ? AND analysisStatus = 'fast_completed'",
-                             (resume_id,))
-                # A failure before the fast-phase INSERT (PDF parse, Truth Guard,
-                # or fast LLM call) leaves no row for the UPDATE above to flag,
-                # which silently orphaned the resume. Persist an error row instead
-                # so every upload reaches a terminal analysisStatus.
+                # Ensure we have a row so the frontend doesn't hang.
                 if conn.execute("SELECT 1 FROM analyses WHERE resumeId = ?", (resume_id,)).fetchone() is None:
                     conn.execute('INSERT INTO analyses (id, resumeId, score, status, breakdown, summary, strengths, improvements, truthFacts, analysisStatus) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
                                  (analysis_id, resume_id, None, None, json.dumps({"error": str(e)}), "", "[]", "[]", "[]", "error"))

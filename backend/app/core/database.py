@@ -48,7 +48,8 @@ def init_db():
             strengths TEXT,
             improvements TEXT,
             truthFacts TEXT,
-            analysisStatus TEXT DEFAULT 'completed'
+            analysisStatus TEXT DEFAULT 'completed',
+            inputHash TEXT
         )
     ''')
 
@@ -57,6 +58,8 @@ def init_db():
     existing_columns = [row[1] for row in cursor.execute('PRAGMA table_info(analyses)').fetchall()]
     if 'analysisStatus' not in existing_columns:
         cursor.execute("ALTER TABLE analyses ADD COLUMN analysisStatus TEXT DEFAULT 'completed'")
+    if 'inputHash' not in existing_columns:
+        cursor.execute("ALTER TABLE analyses ADD COLUMN inputHash TEXT")
     
     # Interviews
     # resumeId links a session to the analyzed resume so the FR-12 scoring
