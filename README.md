@@ -1,168 +1,343 @@
-# Nexora — AI Career Coach
+<div align="center">
 
-Full-stack resume analysis, interview preparation, and career guidance platform. React frontend with FastAPI backend, supporting two fully independent LLM backends: local (Ollama) and cloud (Google Gemini).
+# Nexora
+
+**An AI career coach that never invents skills you don't have.**
+
+Nexora analyzes your resume, runs grounded mock interviews, scores your performance, and builds a learning roadmap — all anchored to what you actually wrote, not what an AI thinks you should have.
+
+[![FastAPI](https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi)](https://fastapi.tiangolo.com)
+[![React](https://img.shields.io/badge/React-19-61DAFB?style=flat-square&logo=react)](https://react.dev)
+[![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?style=flat-square&logo=typescript)](https://www.typescriptlang.org)
+[![Ollama](https://img.shields.io/badge/Ollama-qwen2.5:1.5b-black?style=flat-square)](https://ollama.com)
+[![Gemini](https://img.shields.io/badge/Gemini-API-4285F4?style=flat-square&logo=google)](https://aistudio.google.com)
+
+**[Live Demo](https://nexora-ogeo.onrender.com)** · **[API Docs](#api-reference)** · **[Full Documentation](.kiro/specs/)**
+
+</div>
+
+---
+
+## Overview
+
+Fresh-graduates and job seekers face three compounding problems: they cannot tell why their resume is being rejected, they receive vague AI encouragement instead of recruiter-level critique, and they practice for interviews without knowing which dimension of their performance is actually weak.
+
+Nexora addresses all three through its **Truth Guard system** — a three-step pipeline that structurally prevents the AI from fabricating skills or experience:
+
+1. **Local extraction** — a deterministic Python parser (no LLM) pulls structured facts from the resume: skills, tools, projects, education, name.
+2. **Grounded generation** — every LLM prompt injects those facts and is explicitly constrained to reference only them.
+3. **Post-generation verification** — a regex scan of the output against a 100+ term technology lexicon flags any claim that was not in the user's extracted facts before the result is shown.
+
+---
+
+## Key Features
+
+| Feature | Description |
+|---|---|
+| **Resume Analysis** | ATS score (0–100), five-dimension breakdown, missing keywords vs. a real job description, recruiter-style verdict sentence |
+| **Feedback Editor** | Five-tab improvement editor (Experience, Skills, Education, Formatting, Overview) with apply/dismiss per item, persisted to SQLite |
+| **Resume Tailoring** | Rewrites bullets toward the target role using only verified facts; grounding check result shown to user |
+| **Job Match** | Compares extracted skills against a pasted JD; returns match percentage, matching and missing skills |
+| **Career Roadmap** | Month-by-month learning plan from missing skills; background generation with polling |
+| **Mock Interview — HR** | Behavioral questions; evaluates communication structure and confidence |
+| **Mock Interview — Technical** | Technical questions scoped strictly to the candidate's verified skill set |
+| **Mock Interview — Resume-Based** | Project-by-project audit; challenges answers that exceed what the resume actually claims |
+| **Interview Scoring** | Post-session scoring across technical accuracy, communication, and confidence; issues cite actual words from the transcript |
+| **Dashboard** | Live KPIs (resume score, interview readiness average, skills tracked, action items), health bars, activity feed |
+
+---
 
 ## Architecture
 
 ```
-frontend/              React + TypeScript + Vite
-  src/
-    pages/             Dashboard, AnalysisResults, InterviewRoom, Profile, ...
-    services/          HTTP clients for each backend feature
-    components/        Shared UI (Card, Badge, ScoreCard, ProgressBar, ...)
-
-backend/               FastAPI + Python
-  app/
-    main.py            Server entry point, all HTTP routes
-    api/               Feature modules (resume, interview, tailor, job_match, roadmap)
-    core/
-      llm_client.py    Dual-provider LLM interface (Ollama / Gemini)
-      rag_pipeline.py  Dual-engine RAG for interview context retrieval
-      truth_guard.py   Grounded fact extraction from resumes
-      grounding.py     Deterministic hallucination checker
-      pdf_parser.py    PDF + DOCX text extraction
-      database.py      SQLite schema and migrations
-    prompts/           LLM prompt templates (per feature, per interview mode)
+┌─────────────────────────────────────────────────────────────┐
+│              React 19 SPA  (Vercel / localhost:5173)         │
+│  CSS Modules · lucide-react · react-router-dom v7           │
+└────────────────────────┬────────────────────────────────────┘
+                         │ HTTP/REST
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│         FastAPI Backend  (Render / localhost:8000)           │
+│                                                             │
+│  truth_guard.py ──► Local deterministic fact extraction     │
+│  resume.py      ──► Single unified LLM call (750 tokens)    │
+│  grounding.py   ──► Post-generation TECH_TERMS regex scan   │
+│  rag_pipeline.py──► Provider-aware interview context RAG    │
+│  llm_client.py  ──► FallbackProvider with LRU cache         │
+│  database.py    ──► SQLite, 6-table schema, auto-migration   │
+└───────────┬─────────────────────────────────────────────────┘
+            │
+  ┌─────────┴──────────┐
+  │  LLM_PROVIDER env  │
+  ├────────────────────┤
+  │ ollama             │──► qwen2.5:1.5b  localhost:11434
+  │   RAG: SentTrans   │    (fully offline, no API key)
+  │       + ChromaDB   │
+  ├────────────────────┤
+  │ gemini             │──► gemini-3.5-flash  googleapis.com
+  │   RAG: Embed API   │    (cloud, multi-key failover)
+  │       + cosine sim │
+  └────────────────────┘
 ```
 
-## LLM Provider System
+The two LLM modes are first-class equals. Ollama runs everything locally with no data leaving the machine. Gemini is used for hosted deployment because free-tier servers cannot run local models. The same codebase, same prompts, same interface — switched by one environment variable.
 
-The backend runs one of two LLM backends, selected at boot via `LLM_PROVIDER`:
+For the complete architecture with Mermaid diagrams, data flow, database schema, and RAG design, see [`.kiro/specs/architecture.md`](.kiro/specs/architecture.md).
 
-| | Ollama Mode | Gemini Mode |
-|---|---|---|
-| `LLM_PROVIDER` | `ollama` | `gemini` |
-| LLM | qwen2.5:1.5b (local) | gemini-3.5-flash (cloud) |
-| Interface | `generate_completion()` | `generate_completion()` |
-| Offline | Yes — fully local | No — requires internet |
-| API key | None | `GEMINI_API_KEY` required |
+---
 
-All callers use the same `generate_completion(prompt, system, num_predict, timeout)` signature regardless of provider. The branching is internal to `llm_client.py`.
+## Tech Stack
 
-## RAG Pipeline (Interview Context Retrieval)
+| Layer | Technology |
+|---|---|
+| Frontend | React 19, TypeScript ~6.0, Vite ^8.2, CSS Modules, lucide-react |
+| Routing | react-router-dom v7 |
+| Linting | oxlint |
+| Backend | FastAPI, Python 3.10+, uvicorn |
+| LLM local | Ollama + qwen2.5:1.5b |
+| LLM cloud | Google Gemini API (gemini-3.5-flash) |
+| Embeddings local | sentence-transformers (all-MiniLM-L6-v2) |
+| Embeddings cloud | Google Gemini Embedding API (gemini-embedding-001) |
+| Vector store | ChromaDB (in-memory, Ollama mode only) |
+| PDF parsing | PyMuPDF |
+| DOCX parsing | python-docx |
+| Database | SQLite (auto-created on startup) |
 
-The interview system indexes a user's resume facts (skills, tools, projects) and retrieves relevant context for each turn, so the interviewer's questions stay grounded in the actual resume.
+---
 
-Two engines are available, automatically selected based on `LLM_PROVIDER`:
+## Quick Start
 
-### Gemini Mode RAG
+### Option A — Local, fully offline (Ollama)
 
-```
-Embeddings:  Google gemini-embedding-001 (cloud REST API)
-Storage:     In-memory list + cosine similarity
-Memory:      ~2.6 MB per session (just the embedding vectors)
-Dependencies: None beyond stdlib (urllib + math)
-```
+No API key. No data leaves your machine.
 
-Zero ML packages loaded. The embedding model runs on Google's servers. The per-session corpus (~20-30 documents) is small enough that brute-force cosine similarity over a Python list outperforms a vector DB lookup and avoids chromadb's transitive dependency tree entirely.
+```bash
+# 1. Pull the model (~1 GB)
+ollama pull qwen2.5:1.5b
 
-### Ollama Mode RAG
+# 2. Backend setup
+cd backend
+python -m venv .venv && .venv\Scripts\activate   # Windows
+# source .venv/bin/activate                       # macOS/Linux
+pip install -r requirements.txt
+pip install sentence-transformers chromadb        # Ollama RAG deps
+cp .env.example .env                              # default is LLM_PROVIDER=ollama
 
-```
-Embeddings:  sentence-transformers all-MiniLM-L6-v2 (local CPU)
-Storage:     ChromaDB ephemeral in-memory client
-Memory:      ~280 MB per session (torch + transformers + chromadb)
-Dependencies: sentence-transformers, chromadb (not in requirements.txt)
-```
+# 3. Start backend
+uvicorn app.main:app --reload
 
-Uses the same embedding quality as a local model can provide, with ChromaDB handling vector storage and nearest-neighbour search. All heavy imports are deferred to function scope — they only load when an interview actually starts, not at server boot.
-
-### Why Two Paths
-
-Both are real, tested implementations — neither is a fallback. Gemini mode is designed for cloud deployment where memory is tight (Render free tier: 512 MB). Ollama mode is for fully offline local development where no external API calls are made — not even for embeddings.
-
-### Swapping Engines
-
-The engine is selected once at first use based on `LLM_PROVIDER` and cached as a singleton. The public interface is identical:
-
-```python
-from app.core.rag_pipeline import initialize_interview_rag, get_interview_context
-
-initialize_interview_rag(session_id, truth_facts)  # index resume facts
-context = get_interview_context(session_id, query, k=2)  # retrieve top-k
+# 4. Frontend setup (new terminal)
+cd frontend
+npm install
+echo "VITE_API_BASE=http://127.0.0.1:8000/api" > .env.local
+npm run dev
 ```
 
-Callers never need to know which engine is active.
+Open **http://localhost:5173**.
 
-## Memory Footprint (Gemini Mode — Render Deployment Target)
+---
 
-| State | tracemalloc | Est. RSS | Heavy modules |
+### Option B — Cloud inference (Gemini)
+
+Faster than Ollama. Requires a free API key.
+
+```bash
+# 1. Get a key at https://aistudio.google.com/apikey
+
+# 2. Backend setup
+cd backend
+python -m venv .venv && .venv\Scripts\activate
+pip install -r requirements.txt                   # No ML extras needed
+cp .env.example .env
+# Edit .env:
+#   LLM_PROVIDER=gemini
+#   GEMINI_API_KEY=your_key_here
+
+# 3. Start backend
+uvicorn app.main:app --reload
+
+# 4. Frontend (same as above)
+cd frontend && npm install
+echo "VITE_API_BASE=http://127.0.0.1:8000/api" > .env.local
+npm run dev
+```
+
+---
+
+## Environment Variables
+
+**Backend** — set in `backend/.env` (copy from `backend/.env.example`):
+
+| Variable | Required | Default | Description |
 |---|---|---|---|
-| Server boot | 21.7 MB | ~40 MB | 0 |
-| After RAG init (interview start) | 24.3 MB | ~53 MB | 0 |
-| After full interview (5 turns) | ~25 MB | ~55 MB | 0 |
+| `LLM_PROVIDER` | No | `ollama` | `"ollama"` for local, `"gemini"` for cloud |
+| `GEMINI_API_KEY` | Gemini only | — | Primary API key from Google AI Studio |
+| `GEMINI_API_KEY_1` | No | — | Second key — auto-failover on quota hit |
+| `GEMINI_API_KEY_2` | No | — | Third key — auto-failover chain |
+| `GEMINI_MODEL` | No | `gemini-3.5-flash` | Gemini model override |
 
-Fits comfortably within Render's 512 MB free tier with ~450 MB of headroom.
+**Frontend** — set in `frontend/.env.local` for local dev:
 
-## Setup
+| Variable | Default | Description |
+|---|---|---|
+| `VITE_API_BASE` | Production Render URL | Backend API base URL |
 
-### Prerequisites
+---
 
-- Python 3.10+
-- Node.js 18+
-- Ollama (only for local/ollama mode — not needed for Gemini mode)
+## Usage Flow
+
+```
+1. Upload resume (PDF or DOCX) + set target role + optionally paste a job description
+         ↓
+2. Analysis results: score, breakdown, missing keywords, verdict reason, strengths
+         ↓
+3. Feedback editor: apply / dismiss AI improvement suggestions per section
+         ↓  (also: generate tailored bullets with grounding check)
+         ↓
+4. Job Match: paste a job description → see match percentage + missing skills
+         ↓
+5. Roadmap: auto-generated from missing skills → month-by-month learning plan
+         ↓
+6. Mock Interview: choose HR / Technical / Resume-Based mode
+   → 5-question session grounded in your resume facts
+   → Scoring: accuracy + communication + confidence + specific issue citations
+         ↓
+7. Dashboard: live KPIs, health bars, activity feed, AI insight card
+```
+
+---
+
+## Commands Reference
 
 ### Backend
 
 ```bash
-cd backend
+# Development (from backend/, venv active)
+uvicorn app.main:app --reload
 
-# Create .env (copy from .env.example)
-cp .env.example .env
-# Edit .env to set LLM_PROVIDER and GEMINI_API_KEY if using Gemini mode
-
-# Install dependencies
-pip install -r requirements.txt
-
-# For Ollama mode, additionally install:
-pip install sentence-transformers chromadb
-
-# Start the server
-uvicorn app.main:app --port 8000
+# Production
+uvicorn app.main:app --host 0.0.0.0 --port $PORT
 ```
 
 ### Frontend
 
 ```bash
-cd frontend
-npm install
+# Development
 npm run dev
+
+# Production build
+npm run build
+
+# Lint
+npm run lint
+
+# Preview production build locally
+npm run preview
 ```
 
-### Environment Variables
+---
 
-| Variable | Required | Default | Description |
-|---|---|---|---|
-| `LLM_PROVIDER` | No | `ollama` | `ollama` or `gemini` |
-| `GEMINI_API_KEY` | Gemini only | — | Google AI Studio API key |
-| `GEMINI_MODEL` | No | `gemini-3.5-flash` | Gemini completion model |
+## Deployment
 
-## Deployment (Render)
+The project deploys as a split stack:
 
-1. Create a Web Service on Render pointing to this repository
-2. Set root directory to `backend/`
-3. Build command: `pip install -r requirements.txt`
-4. Start command: `uvicorn app.main:app --host 0.0.0.0 --port $PORT`
-5. Environment variables: `LLM_PROVIDER=gemini`, `GEMINI_API_KEY=<key>`
-6. Instance type: Free (512 MB) is sufficient
+| Component | Platform | Notes |
+|---|---|---|
+| Backend | [Render](https://render.com) Web Service | Start cmd: `cd backend && uvicorn app.main:app --host 0.0.0.0 --port $PORT` |
+| Frontend | [Vercel](https://vercel.com) | Root: `frontend`, build: `npm run build`, output: `dist` |
 
-The Procfile in `backend/` is also respected by Render if present.
+Production runs `LLM_PROVIDER=gemini` — Ollama cannot run on hosted servers. Set `GEMINI_API_KEY` (and optional `GEMINI_API_KEY_1`, `GEMINI_API_KEY_2` for failover) in the Render environment dashboard.
 
-## Features
+> **Render free tier note:** The SQLite database is ephemeral. Data resets on each redeploy or after idle spin-down. Acceptable for demos; upgrade to a persistent disk for production use.
 
-- **Resume Analysis** — Upload PDF/DOCX, get scored feedback with strengths and improvements
-- **Truth Guard** — Grounded fact extraction prevents the LLM from hallucinating resume details
-- **Interview Room** — Practice interviews in HR, Technical, or Resume-Based modes with RAG-grounded questions
-- **Job Match** — Compare resume skills against a job description for match percentage
-- **Tailor** — Rewrite resume bullets toward a target role with hallucination detection
-- **Career Roadmap** — Generate learning plans for missing skills
-- **Profile** — Auto-populated from resume extractions, fully editable
+Full deployment guide: [`.kiro/specs/deployment.md`](.kiro/specs/deployment.md)
 
-## Tech Stack
+---
 
-- **Frontend**: React 19, TypeScript, Vite, CSS Modules
-- **Backend**: FastAPI, Uvicorn, SQLite, PyMuPDF
-- **LLM (local)**: Ollama — qwen2.5 1.5b
-- **LLM (cloud)**: Google Gemini API — gemini-3.5-flash (completion), gemini-embedding-001 (embeddings)
-- **RAG (local)**: sentence-transformers all-MiniLM-L6-v2 + ChromaDB
-- **RAG (cloud)**: Gemini embedding API + in-memory cosine similarity
+## Project Structure
+
+```
+Nexora/
+├── backend/
+│   ├── app/
+│   │   ├── main.py           # FastAPI entry point, all routes
+│   │   ├── core/             # database, llm_client, truth_guard,
+│   │   │                     #   grounding, rag_pipeline, pdf_parser
+│   │   ├── api/              # resume, interview, tailor, job_match, roadmap
+│   │   ├── models/           # Pydantic schemas
+│   │   └── prompts/          # Plain-text LLM system prompts
+│   ├── .env.example          # Environment variable template
+│   └── requirements.txt      # Core deps (no PyTorch — Gemini-mode safe)
+│
+├── frontend/
+│   └── src/
+│       ├── pages/            # One folder per route (14 pages)
+│       ├── components/       # Shared UI: layout, charts, ui primitives
+│       ├── services/         # API client modules (fetch-based)
+│       ├── types/            # TypeScript interfaces
+│       └── config.ts         # API_BASE constant
+│
+├── .kiro/specs/              # Full project documentation
+└── README.md
+```
+
+Full annotated structure: [`.kiro/specs/project-structure.md`](.kiro/specs/project-structure.md)
+
+---
+
+## Documentation
+
+All detailed documentation lives in [`.kiro/specs/`](.kiro/specs/):
+
+| Document | Contents |
+|---|---|
+| [`overview.md`](.kiro/specs/overview.md) | Problem statement, target users, complete user journey, limitations |
+| [`architecture.md`](.kiro/specs/architecture.md) | Tech stack, data flow diagrams, database schema, RAG design, LLM failover |
+| [`features.md`](.kiro/specs/features.md) | Every feature — how it works technically, edge cases, error handling |
+| [`api-reference.md`](.kiro/specs/api-reference.md) | Every endpoint: method, route, request, response, error codes, examples |
+| [`setup-and-development.md`](.kiro/specs/setup-and-development.md) | Prerequisites, install steps, env vars, commands, troubleshooting |
+| [`testing.md`](.kiro/specs/testing.md) | Manual testing checklist, responsive checklist, LLM provider smoke tests |
+| [`deployment.md`](.kiro/specs/deployment.md) | Render + Vercel configuration, post-deploy checks, known limitations |
+| [`project-structure.md`](.kiro/specs/project-structure.md) | Annotated file tree with descriptions of every module |
+| [`changelog.md`](.kiro/specs/changelog.md) | Current implemented state, superseded approaches |
+
+---
+
+## Testing
+
+No automated test suite exists. A full manual testing checklist is available in [`.kiro/specs/testing.md`](.kiro/specs/testing.md), covering:
+
+- Resume upload (PDF + DOCX, validation edge cases)
+- Analysis results and score normalization
+- Feedback editor (apply/dismiss/restore persistence)
+- Tailoring and grounding check output
+- Job match and roadmap generation
+- All three interview modes and the scoring pass
+- Dashboard live data accuracy
+- Responsive / mobile layout
+
+---
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Follow the existing code style — CSS Modules on the frontend, typed Python on the backend
+4. For backend changes: run `uvicorn app.main:app --reload` and verify against the manual checklist
+5. For frontend changes: run `npm run lint` and `npm run build` before opening a PR
+6. Open a pull request with a clear description of what changed and why
+
+---
+
+## Spec-Driven Development
+
+This project was built using [Kiro](https://kiro.dev)'s spec-driven workflow. The `.kiro/specs/` folder contains the requirements, design decisions, and task checklist used throughout development. Key decisions documented there include:
+
+- Why Truth Guard extraction moved from an LLM call to a deterministic Python parser
+- Why the RAG engine has two independent implementations (Ollama vs. Gemini) rather than a single shared library
+- Why the LLM client uses urllib directly instead of the google-genai SDK
+- How the multi-key failover chain and LRU cache were designed
+
+---
+
+*Built with [Kiro](https://kiro.dev)*
